@@ -1,0 +1,42 @@
+{
+  "lock": false,
+  "tasks": {
+    "check": "deno fmt --check && deno lint && deno check **/*.ts && deno check **/*.tsx",
+    "cli": "echo \"import '\\$fresh/src/dev/cli.ts'\" | deno run --unstable -A -",
+    "manifest": "deno task cli manifest $(pwd)",
+    "start": "deno run -A --watch=src/static/,src/routes/ src/dev.ts",
+    "build": "deno run -A src/dev.ts build",
+    "preview": "deno run -A src/main.ts",
+    "update": "deno run -A -r https://fresh.deno.dev/update .",
+    "db:pull": "deno --env -A --node-modules-dir npm:drizzle-kit pull",
+    "db:generate-migrations": "deno --env -A --node-modules-dir npm:drizzle-kit generate",
+    "db:studio": "deno --env -A --node-modules-dir npm:drizzle-kit studio"
+  },
+  "lint": {
+    "rules": {
+      "tags": [
+        "fresh",
+        "recommended"
+      ]
+    }
+  },
+  "exclude": [
+    "**/_fresh/*"
+  ],
+  "imports": {
+    "$fresh/": "https://deno.land/x/fresh@1.7.3/",
+    "@types/pg": "npm:@types/pg@^8.11.10",
+    "drizzle-kit": "npm:drizzle-kit@^0.30.2",
+    "drizzle-orm": "npm:drizzle-orm@^0.38.4",
+    "pg": "npm:pg@^8.13.1",
+    "preact": "https://esm.sh/preact@10.22.0",
+    "preact/": "https://esm.sh/preact@10.22.0/",
+    "@preact/signals": "https://esm.sh/*@preact/signals@1.2.2",
+    "@preact/signals-core": "https://esm.sh/*@preact/signals-core@1.5.1",
+    "$std/": "https://deno.land/std@0.216.0/"
+  },
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "jsxImportSource": "preact"
+  }
+}

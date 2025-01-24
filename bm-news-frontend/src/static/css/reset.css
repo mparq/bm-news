@@ -1,0 +1,92 @@
+/* Resetting margins, paddings, and box-sizing */
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Setting default line height and removing body-specific margin */
+html {
+  line-height: 1.5;
+  -webkit-text-size-adjust: 100%; /* Prevent font scaling in landscape */
+  font-size: 100%; /* Base font size for consistency */
+  scroll-behavior: smooth; /* Enable smooth scrolling */
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, sans-serif; /* Default system font stack */
+  background-color: #fff;
+  color: #000;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased; /* Improve font rendering */
+  text-rendering: optimizeSpeed;
+}
+
+/* Resetting heading, paragraph, and list styles */
+h1, h2, h3, h4, h5, h6 {
+  font-size: inherit;
+  font-weight: inherit;
+}
+
+p,
+ul,
+ol,
+blockquote,
+figure,
+dl,
+dd {
+  margin: 0;
+}
+
+ul,
+ol {
+  list-style: none;
+}
+
+/* Anchor and button resets */
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+button {
+  border: none;
+  background: none;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+
+/* Image reset */
+img,
+picture {
+  max-width: 100%;
+  display: block;
+}
+
+/* Form element resets */
+input,
+textarea,
+select,
+button {
+  font: inherit;
+}
+
+/* Table resets */
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+/* Remove animations for users preferring reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

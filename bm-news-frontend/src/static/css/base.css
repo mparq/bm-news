@@ -1,0 +1,134 @@
+@import url("reset.css");
+@import url("buttons.css");
+@import url("homepage.css");
+
+:root {
+  --h1: 1.8rem;
+  --h2: 1.6rem;
+  --h3: 1.4rem;
+  --h4: 1.2rem;
+  --h5: 1.125rem;
+  --p: 1rem;
+  --text-small: 0.8rem;
+
+  --primary-blue: #002554;
+  --secondary-blue: #193962;
+  --light-blue: #0084c6;
+  --pastel-blue: #617b9b;
+  --dark-blue: #182752;
+  --primary-gold: #bb9d5a;
+  --dark-gold: #8d734a;
+  --secondary-gold: #dfb758;
+  --violet: #614776;
+  --pastel-pink: #ddd6e9;
+  --pink: #ec008c;
+  --orange: #cb7035;
+  --beige: #f8e5be;
+  --white: #fff;
+  --black: #212121;
+  --dark-grey: #333;
+  --light-grey: #f2f2f2;
+  --link: #617b9b;
+  --link-hover: #8aaadb;
+}
+
+/* TYPOGRAPHY */
+
+h1 {
+  font-size: var(--h1);
+}
+h2 {
+  font-size: var(--h2);
+}
+h3 {
+  font-size: var(--h3);
+}
+h4 {
+  font-size: var(--h4);
+}
+h5 {
+  font-size: var(--h5);
+}
+p, strong, button, span, li {
+  font-size: var(--p);
+}
+small {
+  font-size: var(--text-small);
+}
+
+body {
+  color: var(--dark-blue);
+}
+
+h1 {
+  text-transform: uppercase;
+}
+
+h1, h2, h3, h4, h5 {
+  margin-bottom: 1.5rem;
+}
+
+p, strong {
+  line-height: 1.4;
+  margin-bottom: 1rem;
+}
+
+a {
+  color: var(--light-blue);
+}
+
+li {
+  line-height: 1.4;
+}
+.dotted-list li {
+  list-style: dotted;
+  margin-left: 2rem;
+  margin-bottom: 0.5rem;
+}
+.numbered-list li {
+  list-style: numbered;
+  margin-left: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+section {
+  position: relative;
+  padding: 2rem 0;
+}
+
+.custom-logo {
+  max-width: 108px;
+}
+
+.container {
+  position: relative;
+  margin: 0 1.5rem;
+  padding: 2rem 0;
+}
+
+.no-padding {
+  padding: 0;
+}
+
+.padding-top-bottom-1 {
+  padding: 1rem 0;
+}
+
+@media (min-width: 768px) {
+  :root {
+    --h1: 2.5rem;
+    --h2: 2rem;
+    --h3: 1.7rem;
+    --h4: 1.4rem;
+    --h5: 1.2rem;
+    --p: 1.125rem;
+  }
+}
+
+@media (min-width: 992px) {
+  .container {
+    width: 85%;
+    max-width: 1280px;
+    margin: 0 auto;
+  }
+}
