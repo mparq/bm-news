@@ -4,8 +4,6 @@ on:
   push:
     branches:
       - main
-    paths:
-      - 'bm-news-frontend/**'
 
 env:
   REGISTRY: ghcr.io
