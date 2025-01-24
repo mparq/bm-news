@@ -1,0 +1,4 @@
+#!/bin/bash
+set -e
+docker exec -it bm-news-node-db-1 psql -U postgres -f db/schema.sql
+docker exec -it bm-news-node-db-1 psql -U postgres -f db/populate.sql
