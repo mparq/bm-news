@@ -6,6 +6,7 @@ export default defineConfig({
   schema: "./src/db/schema.ts",
   out: "./drizzle",
   dbCredentials: {
-    url: Deno.env.get("BM_NEWS_DATABASE_URL")!,
+    // default to the local docker image database. DO NOT USE IN PROD
+    url: Deno.env.get("BM_NEWS_DATABASE_URL") || 'postgresql://postgres:localpassword@localhost:5021/postgres',
   },
 });
