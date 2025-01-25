@@ -1,0 +1,30 @@
+- hosts: hosts
+  tasks:
+    - name: Ensure docker-compose is installed
+      ansible.builtin.package:
+        name:
+          - docker-ce
+          - docker-ce-cli
+          - containerd.io
+          - docker-buildx-plugin
+          - docker-compose-plugin
+    - name: Ensure /app exists on host
+      ansible.builtin.file:
+        path: /app
+        state: directory
+    - name: Ensure /app/nginx exists on host
+      ansible.builtin.file:
+        path: /app/nginx
+        state: directory
+    - name: Copy nginx conf to host
+      ansible.builtin.copy:
+        src: ../digitalocean/nginx.conf
+        dest: /app/nginx/nginx.conf
+    - name: Copy docker-compose.yaml to app
+      ansible.builtin.copy:
+        src: ../digitalocean/docker-compose.yaml
+        dest: /app/docker-compose.yaml
+    - name: Copy schema.sql to /app/ for mounting to postgres
+      ansible.builtin.copy:
+        src: ../../db/schema.sql
+        dest: /app/schema.sql

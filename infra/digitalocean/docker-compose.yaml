@@ -1,0 +1,62 @@
+version: '3.8'
+
+services:
+  nginx:
+    image: nginx:1.26
+    container_name: nginx-reverse-proxy
+    ports:
+      - "80:80"         # Expose port 80 for incoming traffic
+      - "443:443"         # Expose port 80 for incoming traffic
+    volumes:
+      - /app/nginx/:/etc/nginx/conf.d/:ro
+      - ./certbot/www/:/var/www/certbot/:ro
+      - ./certbot/conf/:/etc/nginx/ssl/:ro
+    depends_on:
+      - web            # Ensure the web service starts before nginx
+    networks:
+      - app-network
+  certbot:
+    image: certbot/certbot:latest
+    volumes:
+      - ./certbot/www/:/var/www/certbot/:rw
+      - ./certbot/conf/:/etc/letsencrypt/:rw
+
+  web:
+    image: ghcr.io/mparq/bm-news:main  # 
+    restart: always
+    container_name: web-service
+    environment:
+      # within docker app network
+      - BM_NEWS_DATABASE_URL=postgresql://postgres:postgres@postgres:5432/newsdb  # Connection URL to PostgreSQL
+    depends_on:
+      - postgres       # Ensure the PostgreSQL service starts before web
+    networks:
+      - app-network
+
+  postgres:
+    image: postgres:17.2
+    container_name: postgres-db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: newsdb
+    stop_grace_period: 30s
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 10s
+      retries: 10
+    volumes:
+      - ./schema.sql:/docker-entrypoint-initdb.d/createdb.sql
+      - postgres-data:/var/lib/postgresql/data  # Persistent data storage
+    networks:
+      - app-network
+
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  postgres-data:
+    driver: local

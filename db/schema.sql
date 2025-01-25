@@ -1,5 +1,5 @@
-drop schema public cascade;
-create schema public;
+--drop schema public cascade;
+--create schema public;
 
 create table medias (
   -- NOTE: media id should be generated in server and cross-ref

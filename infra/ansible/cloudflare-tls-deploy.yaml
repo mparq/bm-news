@@ -1,0 +1,93 @@
+- hosts: hosts
+  vars:
+    domain: "parq-proto.com"
+    ssl_base_path: "/etc/ssl"
+    ssl_private_path: "{{ ssl_base_path }}/private"
+    ssl_certs_path: "{{ ssl_base_path }}/certs"
+    ssl_csrs_path: "{{ ssl_base_path }}/csr"
+    privatekey_path: "{{ ssl_private_path }}/{{ domain }}.pem"
+    certificate_path: "{{ ssl_certs_path }}/{{ domain }}.crt"
+    csr_path: "{{ ssl_csrs_path }}/{{ domain }}.csr"
+    ansible_vault_identity: "@scripts/vault-keyring-client.py"
+    v_cloudflare_origin_ca_key: "{{ cloudflare_origin_ca_key }}"
+    v_cloudflare_zone_id: "{{ cloudflare_zone_id }}"
+  tasks:
+    - name: Ensure python cryptography module is installed
+      ansible.builtin.package:
+        name:
+          - python3-packaging
+          - python3-cryptography
+    - name: Ensure private directory exists
+      ansible.builtin.file:
+        path: "{{ ssl_private_path }}"
+        state: directory
+    - name: Ensure certificates directory exists
+      ansible.builtin.file:
+        path: "{{ ssl_certs_path }}"
+        state: directory
+
+    - name: Generate an openssl private key
+      community.crypto.openssl_privatekey:
+        path: "{{ privatekey_path }}"
+        size: 2048
+    - name: Ensure csr directory exists
+      ansible.builtin.file:
+        path: "{{ ssl_csrs_path }}"
+        state: directory
+    - name: Generate cloudflare origin csr with openssl
+      community.crypto.openssl_csr:
+        path: "{{ csr_path }}"
+        privatekey_path: "{{ privatekey_path }}"
+        common_name: "{{ domain }}"
+        subject_alt_name:
+          - "DNS:{{domain}}"
+          - "DNS:*.{{domain}}"
+        state: present
+        return_content: true
+      register: csr_res
+    - name: Generate cloudflare origin certificate with csr
+      ansible.builtin.uri:
+        url: https://api.cloudflare.com/client/v4/certificates
+        method: POST
+        body:
+          csr: "{{ csr_res.csr }}"
+          hostnames:
+            - "{{domain}}"
+            - "*.{{domain}}"
+          request_type: "origin-rsa"
+          requested_validity: 90
+        body_format: json
+        headers:
+          content-type: application/json
+          x-auth-user-service-key: "{{ v_cloudflare_origin_ca_key }}"
+      register: origin_cert_create_res
+    - name: Parse cert from response
+      ansible.builtin.set_fact:
+        origin_cert_parsed: "{{ origin_cert_create_res['json']['result']['certificate'] }}"
+    - name: Debug response
+      ansible.builtin.debug:
+        var: origin_cert_create_res
+    - name: Debug response
+      ansible.builtin.debug:
+        var: origin_cert_parsed
+    - name: Write origin cert to filesystem
+      ansible.builtin.copy:
+        dest: "{{ certificate_path }}"
+        content: "{{ origin_cert_parsed }}"
+
+
+    # - name: List cloudflare origin certificates
+    #   ansible.builtin.uri:
+    #     url: "https://api.cloudflare.com/client/v4/certificates?zone_id={{ v_cloudflare_zone_id }}"
+    #     method: GET
+    #     headers:
+    #       content-type: application/json
+    #       x-auth-user-service-key: "{{ v_cloudflare_origin_ca_key }}"
+    #     return_content: yes
+    #   register: origin_certs_res
+    # - name: Parse cert from response
+    #   ansible.builtin.set_fact:
+    #     origin_cert_parsed: "{{ origin_certs_res['content'] | ansible.builtin.from_json | community.general.json_query('result[0].certificate') }}"
+    # - name: Debug response
+    #   ansible.builtin.debug:
+    #     var: origin_cert_parsed
